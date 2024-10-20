@@ -1,0 +1,237 @@
+<div class="container mx-auto py-4">
+  <header>
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">Productos</h1>
+      <button
+        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+        (click)="openModal()"
+      >
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+  </header>
+
+  <div
+    class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 mt-5"
+  >
+    <section>
+      <shared-table
+        [data]="listProducts"
+        [columns]="tableColumns"
+        [btnUpdate]="true"
+        [btnDelete]="true"
+        (updateClicked)="openEditModal($event)"
+        (deleteClicked)="deleteProduct($event)"
+      ></shared-table>
+    </section>
+  </div>
+
+  <section>
+    <div
+      id="create_user_modal"
+      class="fixed inset-0 z-10"
+      [ngClass]="{ hidden: !isModalOpen }"
+      aria-labelledby="modal-title"
+      role="dialog"
+      aria-modal="true"
+    >
+      <!-- Background backdrop -->
+      <div
+        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        aria-hidden="true"
+      ></div>
+
+      <div
+        class="fixed inset-0 z-10 w-full h-full flex items-center justify-center"
+      >
+        <div
+          class="relative bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 space-y-4"
+        >
+          <!-- Modal header -->
+          <div class="flex justify-between items-center">
+            <h3 class="text-2xl font-semibold text-gray-900" id="modal-title">
+              {{ modalTitle }}
+            </h3>
+            <button
+              type="button"
+              class="text-gray-400 hover:text-gray-600 transition"
+              (click)="closeModal()"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <!-- Formulario -->
+          <form
+            [formGroup]="productsForm"
+            (ngSubmit)="createProduct()"
+            class="space-y-6"
+          >
+            <div class="grid grid-cols-1 gap-4">
+              <div>
+                <label
+                  for="name"
+                  class="block text-sm font-medium text-gray-700"
+                  >Nombre</label
+                >
+                <input
+                  type="text"
+                  id="name"
+                  formControlName="name"
+                  placeholder="Ingrese su nombre"
+                  [ngClass]="{ 'border-red-500': isValidField('name') }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+                <span *ngIf="isValidField('name')" class="text-red-500 text-sm">
+                  {{ getFieldError("name") }}
+                </span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4">
+              <div>
+                <label
+                  for="description"
+                  class="block text-sm font-medium text-gray-700"
+                  >Descripcion</label
+                >
+                <input
+                  type="text"
+                  id="description"
+                  formControlName="description"
+                  placeholder="Ingrese su descripcion"
+                  [ngClass]="{ 'border-red-500': isValidField('description') }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+                <span
+                  *ngIf="isValidField('description')"
+                  class="text-red-500 text-sm"
+                >
+                  {{ getFieldError("description") }}
+                </span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="productType"
+                  class="block text-sm font-medium text-gray-700"
+                  >Tipo de producto</label
+                >
+                <select
+                  id="productType"
+                  formControlName="productType"
+                  [ngClass]="{ 'border-red-500': isValidField('productType') }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>Seleccione un tipo</option>
+                  <option value="1">Producto terminado</option>
+                  <option value="2">Materia Prima</option>
+                </select>
+                <span
+                  *ngIf="isValidField('productType')"
+                  class="text-red-500 text-sm"
+                >
+                  {{ getFieldError("productType") }}
+                </span>
+              </div>
+              <div>
+                <label
+                  for="fkUnitId"
+                  class="block text-sm font-medium text-gray-700"
+                  >Unidad</label
+                >
+                <select
+                  id="fkUnitId"
+                  formControlName="fkUnitId"
+                  [ngClass]="{ 'border-red-500': isValidField('fkUnitId') }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>
+                    Seleccione una unidad
+                  </option>
+                  <option *ngFor="let r of listUnits" [value]="r.unitId">
+                    {{ r.name }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="isValidField('fkUnitId')"
+                  class="text-red-500 text-sm"
+                >
+                  {{ getFieldError("fkUnitId") }}
+                </span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="stock"
+                  class="block text-sm font-medium text-gray-700"
+                  >Stock</label
+                >
+                <input
+                  type="number"
+                  id="stock"
+                  formControlName="stock"
+                  placeholder="Ingrese su stock"
+                  [ngClass]="{ 'border-red-500': isValidField('stock') }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+                <span
+                  *ngIf="isValidField('stock')"
+                  class="text-red-500 text-sm"
+                >
+                  {{ getFieldError("stock") }}
+                </span>
+              </div>
+              <div>
+                <label
+                  for="status"
+                  class="block text-sm font-medium text-gray-700"
+                  >Estado</label
+                >
+                <select
+                  id="status"
+                  formControlName="status"
+                  [ngClass]="{ 'border-red-500': isValidField('status') }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>
+                    Seleccione un estado
+                  </option>
+                  <option value="1">Activo</option>
+                  <option value="0">Inactivo</option>
+                </select>
+                <span
+                  *ngIf="isValidField('status')"
+                  class="text-red-500 text-sm"
+                >
+                  {{ getFieldError("status") }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
+                (click)="closeModal()"
+              >
+                Cerrar
+              </button>
+              <button
+                type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              >
+                Crear
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

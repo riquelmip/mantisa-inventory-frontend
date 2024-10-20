@@ -1,0 +1,381 @@
+<div class="container mx-auto py-4">
+  <header>
+    <div class="flex items-center justify-between">
+      <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
+        Ordenes de Producción
+      </h1>
+      <button
+        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+        (click)="openModal()"
+      >
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+  </header>
+
+  <div
+    class="flex flex-col bg-white border shadow-sm rounded-xl p-4 md:p-5 mt-5"
+  >
+    <section>
+      <shared-table
+        [data]="listProductionOrders"
+        [columns]="tableColumns"
+        [thirdBtn]="true"
+        (thirdBtnClicked)="handleThirdBtn($event)"
+      ></shared-table>
+    </section>
+  </div>
+
+  <section>
+    <div
+      id="create_user_modal"
+      class="fixed inset-0 z-10"
+      [ngClass]="{ hidden: !isModalOpen }"
+      aria-labelledby="modal-title"
+      role="dialog"
+      aria-modal="true"
+    >
+      <!-- Background backdrop -->
+      <div
+        class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+        aria-hidden="true"
+      ></div>
+
+      <div
+        class="fixed inset-0 z-10 w-full h-full flex items-center justify-center"
+      >
+        <div
+          class="relative bg-white rounded-lg shadow-lg w-full max-w-2xl p-6 space-y-4"
+        >
+          <!-- Modal header -->
+          <div class="flex justify-between items-center">
+            <h3 class="text-2xl font-semibold text-gray-900" id="modal-title">
+              {{ modalTitle }}
+            </h3>
+            <button
+              type="button"
+              class="text-gray-400 hover:text-gray-600 transition"
+              (click)="closeModal()"
+            >
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+
+          <!-- Formulario -->
+          <form
+            [formGroup]="productionOrderForm"
+            (ngSubmit)="createOrder()"
+            class="space-y-6"
+          >
+            <div class="grid grid-cols-1 gap-4">
+              <div>
+                <label
+                  for="customer"
+                  class="block text-sm font-medium text-gray-700"
+                  >Cliente</label
+                >
+                <input
+                  type="text"
+                  id="customer"
+                  formControlName="customer"
+                  placeholder="Ingrese el nombre del cliente"
+                  [ngClass]="{ 'border-red-500': isValidField('customer') }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+                <span
+                  *ngIf="isValidField('customer')"
+                  class="text-red-500 text-sm"
+                >
+                  {{ getFieldError("customer") }}
+                </span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label
+                  for="fkRequestedProductId"
+                  class="block text-sm font-medium text-gray-700"
+                  >Producto Solicitado</label
+                >
+                <select
+                  id="fkRequestedProductId"
+                  formControlName="fkRequestedProductId"
+                  [ngClass]="{
+                    'border-red-500': isValidField('fkRequestedProductId')
+                  }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>
+                    Seleccione un producto
+                  </option>
+                  <option
+                    *ngFor="let r of listTerminateProducts"
+                    [value]="r.productId"
+                  >
+                    {{ r.name }}
+                  </option>
+                </select>
+                <span
+                  *ngIf="isValidField('fkRequestedProductId')"
+                  class="text-red-500 text-sm"
+                >
+                  {{ getFieldError("fkRequestedProductId") }}
+                </span>
+              </div>
+
+              <div>
+                <label
+                  for="quantity"
+                  class="block text-sm font-medium text-gray-700"
+                  >Cantidad</label
+                >
+                <input
+                  type="number"
+                  id="quantity"
+                  formControlName="quantity"
+                  placeholder="Ingrese la cantidad"
+                  [ngClass]="{ 'border-red-500': isValidField('quantity') }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+                <span
+                  *ngIf="isValidField('quantity')"
+                  class="text-red-500 text-sm"
+                >
+                  {{ getFieldError("quantity") }}
+                </span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4">
+              <div>
+                <label
+                  for="deliveryDate"
+                  class="block text-sm font-medium text-gray-700"
+                  >Fecha de entrega</label
+                >
+                <input
+                  type="date"
+                  id="deliveryDate"
+                  formControlName="deliveryDate"
+                  placeholder="Ingrese la fecha de entrega"
+                  [ngClass]="{ 'border-red-500': isValidField('deliveryDate') }"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                />
+                <span
+                  *ngIf="isValidField('deliveryDate')"
+                  class="text-red-500 text-sm"
+                >
+                  {{ getFieldError("deliveryDate") }}
+                </span>
+              </div>
+            </div>
+
+            <hr />
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+              <div>
+                <label
+                  for="selectedMP"
+                  class="block text-sm font-medium text-gray-700"
+                  >Materia Prima</label
+                >
+                <select
+                  id="selectedMP"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                >
+                  <option value="" disabled selected>
+                    Seleccione una materia prima
+                  </option>
+                  <option
+                    *ngFor="let r of listMPProducts"
+                    [value]="r.productId"
+                  >
+                    {{ r.name }}
+                  </option>
+                </select>
+              </div>
+              <div>
+                <label
+                  for="mpQuantity"
+                  class="block text-sm font-medium text-gray-700"
+                  >Cantidad a utilizar</label
+                >
+                <input
+                  type="number"
+                  id="quantityMP"
+                  class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  placeholder="Ingrese la cantidad"
+                />
+              </div>
+              <div>
+                <button
+                  type="button"
+                  class="bg-green-500 text-white px-4 py-2 rounded-md shadow hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition"
+                  (click)="addMPProduct()"
+                >
+                  Agregar
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-6">
+              <h4 class="text-lg font-medium text-gray-900">
+                Productos de Materia Prima Seleccionados
+              </h4>
+              <table class="min-w-full divide-y divide-gray-200 mt-2">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Producto
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Cantidad
+                    </th>
+                    <th
+                      scope="col"
+                      class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    >
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                  <tr *ngFor="let mpProduct of listSelectMPProducts">
+                    <td
+                      class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                    >
+                      {{ mpProduct.productName }}
+                    </td>
+                    <td
+                      class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"
+                    >
+                      {{ mpProduct.quantity }}
+                    </td>
+                    <td
+                      class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
+                    >
+                      <button
+                        type="button"
+                        class="text-red-600 hover:text-red-900"
+                        (click)="removeMPProduct(mpProduct)"
+                      >
+                        Eliminar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
+                (click)="closeModal()"
+              >
+                Cerrar
+              </button>
+              <button
+                type="submit"
+                class="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+              >
+                Crear
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal de confirmación de envío a producción -->
+  <div
+    id="confirm_production_modal"
+    class="fixed inset-0 z-10"
+    [ngClass]="{ hidden: !isConfirmModalOpen }"
+    aria-labelledby="confirm-modal-title"
+    role="dialog"
+    aria-modal="true"
+  >
+    <!-- Background backdrop -->
+    <div
+      class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+      aria-hidden="true"
+    ></div>
+
+    <div
+      class="fixed inset-0 z-10 w-full h-full flex items-center justify-center"
+    >
+      <div
+        class="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6 space-y-4"
+      >
+        <!-- Modal header -->
+        <div class="flex justify-between items-center">
+          <h3
+            class="text-2xl font-semibold text-gray-900"
+            id="confirm-modal-title"
+          >
+            Confirmar Envío a Producción
+          </h3>
+          <button
+            type="button"
+            class="text-gray-400 hover:text-gray-600 transition"
+            (click)="closeConfirmModal()"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <input type="hidden" id="productionOrderIdToSendProd" value="0" />
+
+        <!-- Select de tipo de línea -->
+        <div>
+          <label
+            for="productionLineTypeId"
+            class="block text-sm font-medium text-gray-700"
+          >
+            Tipo de Línea
+          </label>
+          <select
+            id="productionLineTypeId"
+            class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+          >
+            <option value="" disabled selected>
+              Seleccione un tipo de línea
+            </option>
+            <option
+              *ngFor="let line of listProdLinesTypes"
+              [value]="line.productLineTypeId"
+            >
+              {{ line.name }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Acciones -->
+        <div class="flex justify-end space-x-3 pt-4">
+          <button
+            type="button"
+            class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
+            (click)="closeConfirmModal()"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            (click)="submitProductionOrder()"
+          >
+            Sí, Enviar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

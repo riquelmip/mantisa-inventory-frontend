@@ -54,6 +54,19 @@ export class ColumnValuePipe implements PipeTransform {
 
         break;
 
+      case 'line-status':
+        if (displayValue === 0) {
+          displayValue = 'Pendiente';
+        }
+        if (displayValue === 1) {
+          displayValue = 'En producción';
+        }
+        if (displayValue === 2) {
+          displayValue = 'Finalizada';
+        }
+
+        break;
+
       default:
         break;
     }

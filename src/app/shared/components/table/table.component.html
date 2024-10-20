@@ -26,7 +26,10 @@
               (click)="
                 handleButtonClick(
                   'update',
-                  row.id ?? row.productId ?? row.productionOrderId
+                  row.id ??
+                    row.productId ??
+                    row.productionOrderId ??
+                    row.productionLineId
                 )
               "
             >
@@ -41,7 +44,10 @@
               (click)="
                 handleButtonClick(
                   'delete',
-                  row.id ?? row.productId ?? row.productionOrderId
+                  row.id ??
+                    row.productId ??
+                    row.productionOrderId ??
+                    row.productionLineId
                 )
               "
             >
@@ -56,7 +62,10 @@
               (click)="
                 handleButtonClick(
                   'thirdBtn',
-                  row.id ?? row.productId ?? row.productionOrderId
+                  row.id ??
+                    row.productId ??
+                    row.productionOrderId ??
+                    row.productionLineId
                 )
               "
             >

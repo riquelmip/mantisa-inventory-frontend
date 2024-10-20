@@ -14,6 +14,8 @@ import {
 import { CreateProductionOrderGeneralResponse } from '../interfaces/create-production-order.interface';
 import { AssignProductionsOrdersToProdGeneralResponse } from '../interfaces/assign-production-orders-to-prod.interface';
 import { GetAllProductionsLineTypesGeneralResponse } from '../interfaces/get-all-prod-lines-types.interface';
+import { GetAllProductionsLineGeneralResponse } from '../interfaces/get-all-production-lines.interface';
+import { FinishLineGeneralResponse } from '../interfaces/finish-line.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -123,6 +125,49 @@ export class ProductionOrderService {
         { headers }
       )
     ).pipe(
+      map((response) => response.data),
+      catchError((error) => {
+        return throwError(
+          () => error.response?.data.message || 'Error desconocido'
+        );
+      })
+    );
+  }
+
+  getProductionLines(): Observable<GetAllProductionsLineGeneralResponse> {
+    const url = `${this.baseUrl}/admin/production-orders/get-all-production-lines`;
+    const token = localStorage.getItem('token') || '';
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    return from(
+      axios.post<GetAllProductionsLineGeneralResponse>(url, {}, { headers })
+    ).pipe(
+      map((response) => response.data),
+      catchError((error) => {
+        return throwError(
+          () => error.response?.data.message || 'Error desconocido'
+        );
+      })
+    );
+  }
+
+  finishProductionLine(
+    productionLineId: number
+  ): Observable<FinishLineGeneralResponse> {
+    const url = `${this.baseUrl}/admin/production-orders/finish-production`;
+    const token = localStorage.getItem('token') || '';
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const formData = new FormData();
+    formData.append('productionLineId', productionLineId.toString());
+
+    return from(axios.post(url, formData, { headers })).pipe(
       map((response) => response.data),
       catchError((error) => {
         return throwError(

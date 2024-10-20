@@ -4,5 +4,5 @@ export interface TableColumn {
   def: string; //DEFINICION
   dataKey: string; //KEY
   formatt?: string; //FORMATO DE TEXTO
-  dataType?: 'date' | 'object' | 'status' | 'order-status'; //TIPO DE DATO
+  dataType?: 'date' | 'object' | 'status' | 'order-status' | 'line-status'; //TIPO DE DATO
 }

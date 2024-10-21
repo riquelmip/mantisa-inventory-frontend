@@ -1,3 +1,4 @@
 export const environment = {
-  baseUrl: 'http://127.0.0.1:8000/',
+  baseUrl: 'https://mantisa-inventory-production.up.railway.app/api',
+  last_route: 'last_route',
 };

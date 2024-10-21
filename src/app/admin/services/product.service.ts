@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
-import { environment } from '../../../environments/environments';
 import { Observable, from, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { GetProductsGeneralResponse } from '../interfaces/get-products.interface';
 import { GetUnitsGeneralResponse } from '../interfaces/get-units.interface';
 import { CreateProductGeneralResponse } from '../interfaces/create-product.interface';
 import { DeleteProductGeneralResponse } from '../interfaces/delete-product.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',

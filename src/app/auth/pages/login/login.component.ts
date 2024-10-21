@@ -16,8 +16,8 @@ import {
 } from '../../interfaces/login.interface';
 import { SharedModule } from '../../../shared/shared.module';
 import { Router } from '@angular/router';
-import { environment } from '../../../../environments/environments';
 import { GetUserGeneralResponse } from '../../interfaces/get-user.interface';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',

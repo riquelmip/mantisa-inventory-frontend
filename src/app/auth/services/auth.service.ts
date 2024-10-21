@@ -1,6 +1,6 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import axios from 'axios';
-import { environment } from '../../../environments/environments';
+import { environment } from '../../../environments/environment';
 import { BehaviorSubject, Observable, from, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { LoginGeneralResponse } from '../interfaces/login.interface';

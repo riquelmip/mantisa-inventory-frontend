@@ -1,12 +1,7 @@
 import { Injectable } from '@angular/core';
 import axios from 'axios';
-import { environment } from '../../../environments/environments';
 import { Observable, from, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { GetProductsGeneralResponse } from '../interfaces/get-products.interface';
-import { GetUnitsGeneralResponse } from '../interfaces/get-units.interface';
-import { CreateProductGeneralResponse } from '../interfaces/create-product.interface';
-import { DeleteProductGeneralResponse } from '../interfaces/delete-product.interface';
 import {
   GetProductionsOrdersGeneralResponse,
   OrderDetail,
@@ -16,6 +11,7 @@ import { AssignProductionsOrdersToProdGeneralResponse } from '../interfaces/assi
 import { GetAllProductionsLineTypesGeneralResponse } from '../interfaces/get-all-prod-lines-types.interface';
 import { GetAllProductionsLineGeneralResponse } from '../interfaces/get-all-production-lines.interface';
 import { FinishLineGeneralResponse } from '../interfaces/finish-line.interface';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',

@@ -61,6 +61,7 @@ export class ProductsComponent {
 
   productsForm: FormGroup = this.fb.group({});
   public isModalOpen: boolean = false;
+  public isReportModalOpen: boolean = false;
 
   ngOnInit(): void {
     this.initializeForm();
@@ -254,5 +255,40 @@ export class ProductsComponent {
 
   getFieldError(field: string): string | null {
     return this.sharedService.getFieldError(this.productsForm, field);
+  }
+
+  generateReport(): void {
+    const reportTypeElement = document.getElementById(
+      'reportType'
+    ) as HTMLSelectElement;
+    const type = reportTypeElement.value
+      ? parseInt(reportTypeElement.value)
+      : 0;
+
+    if (type == 0) {
+      this.sharedService.errorAlert('Seleccione un tipo de reporte');
+      return;
+    }
+
+    this.loading.show();
+    this.productService.generatePdfReport(type).subscribe({
+      next: (response: any) => {
+        this.loading.hide();
+        this.closeReportModal();
+        this.sharedService.successAlert('Reporte generado correctamente');
+      },
+      error: (message: any) => {
+        this.loading.hide();
+        this.sharedService.errorAlert(message);
+      },
+    });
+  }
+
+  openReportModal(): void {
+    this.isReportModalOpen = true;
+  }
+
+  closeReportModal(): void {
+    this.isReportModalOpen = false;
   }
 }

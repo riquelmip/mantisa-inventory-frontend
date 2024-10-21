@@ -4,12 +4,20 @@
       <h1 class="text-2xl font-bold text-gray-900 sm:text-3xl">
         Ordenes de Producción
       </h1>
-      <button
-        class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
-        (click)="openModal()"
-      >
-        <i class="fas fa-plus"></i>
-      </button>
+      <div class="flex space-x-2">
+        <button
+          class="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+          (click)="openModal()"
+        >
+          <i class="fas fa-plus"></i>
+        </button>
+        <button
+          class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600"
+          (click)="openReportModal()"
+        >
+          <i class="fas fa-file-alt"></i>
+        </button>
+      </div>
     </div>
   </header>
 
@@ -375,6 +383,99 @@
             Sí, Enviar
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div
+    id="report_type_modal"
+    class="fixed inset-0 z-10"
+    [ngClass]="{ hidden: !isReportModalOpen }"
+    aria-labelledby="report-modal-title"
+    role="dialog"
+    aria-modal="true"
+  >
+    <!-- Background backdrop -->
+    <div
+      class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+      aria-hidden="true"
+    ></div>
+
+    <div
+      class="fixed inset-0 z-10 w-full h-full flex items-center justify-center"
+    >
+      <div
+        class="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6 space-y-4"
+      >
+        <!-- Modal header -->
+        <div class="flex justify-between items-center">
+          <h3
+            class="text-2xl font-semibold text-gray-900"
+            id="report-modal-title"
+          >
+            Seleccionar Filtros
+          </h3>
+          <button
+            type="button"
+            class="text-gray-400 hover:text-gray-600 transition"
+            (click)="closeReportModal()"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <!-- Selección de tipo de reporte -->
+        <form (ngSubmit)="generateReport()">
+          <div class="grid grid-cols-1 gap-4">
+            <div>
+              <label
+                for="statusOrderReport"
+                class="block text-sm font-medium text-gray-700"
+                >Estado de la Orden</label
+              >
+              <select
+                id="statusOrderReport"
+                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              >
+                <option value="-1" disabled selected>
+                  Seleccione un estado
+                </option>
+                <option value="0">Pendiente</option>
+                <option value="1">En Proceso</option>
+                <option value="2">Finalizada</option>
+              </select>
+            </div>
+            <div>
+              <label
+                for="reportDeliveryDate"
+                class="block text-sm font-medium text-gray-700"
+                >Fecha de Entrega</label
+              >
+              <input
+                type="date"
+                id="reportDeliveryDate"
+                class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="flex justify-end space-x-3 pt-4">
+            <button
+              type="button"
+              class="bg-gray-300 text-gray-800 px-4 py-2 rounded-md hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition"
+              (click)="closeReportModal()"
+            >
+              Cerrar
+            </button>
+            <button
+              type="submit"
+              class="bg-blue-600 text-white px-4 py-2 rounded-md shadow hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            >
+              Generar Reporte
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

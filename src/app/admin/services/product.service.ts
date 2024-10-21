@@ -155,4 +155,43 @@ export class ProductService {
       })
     );
   }
+
+  generatePdfReport(productType: number): Observable<any> {
+    const url = `${this.baseUrl}/admin/products/get-inventory-report`;
+    const token = localStorage.getItem('token') || '';
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const formData = new FormData();
+    formData.append('type', productType.toString());
+
+    return from(
+      axios.post(url, formData, {
+        headers,
+        responseType: 'blob',
+      })
+    ).pipe(
+      map((response) => {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'inventory_report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        window.URL.revokeObjectURL(url);
+
+        return response.data;
+      }),
+      catchError((error) => {
+        return throwError(
+          () => error.response?.data.message || 'Error desconocido'
+        );
+      })
+    );
+  }
 }

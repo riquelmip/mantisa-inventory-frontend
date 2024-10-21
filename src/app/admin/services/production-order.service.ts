@@ -176,4 +176,44 @@ export class ProductionOrderService {
       })
     );
   }
+
+  generatePdfReport(status: number, deliveryDate: string): Observable<any> {
+    const url = `${this.baseUrl}/admin/production-orders/get-orders-report`;
+    const token = localStorage.getItem('token') || '';
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    const formData = new FormData();
+    formData.append('status', status.toString());
+    formData.append('deliveryDate', deliveryDate);
+
+    return from(
+      axios.post(url, formData, {
+        headers,
+        responseType: 'blob',
+      })
+    ).pipe(
+      map((response) => {
+        const blob = new Blob([response.data], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'orders_report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        window.URL.revokeObjectURL(url);
+
+        return response.data;
+      }),
+      catchError((error) => {
+        return throwError(
+          () => error.response?.data.message || 'Error desconocido'
+        );
+      })
+    );
+  }
 }

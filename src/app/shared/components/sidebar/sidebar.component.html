@@ -37,7 +37,11 @@
   </div>
   <div class="m-4">
     <ul class="mb-4 flex flex-col gap-1">
-      <li>
+      <li
+        *ngIf="
+          role === 'ADMIN' || role === 'WAREHOUSE' || role === 'PRODUCTION'
+        "
+      >
         <a routerLink="/admin/home">
           <button
             routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85]"
@@ -54,7 +58,7 @@
         </a>
       </li>
 
-      <li>
+      <li *ngIf="role === 'ADMIN' || role === 'WAREHOUSE'">
         <a routerLink="/admin/products">
           <button
             routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85]"
@@ -71,7 +75,7 @@
         </a>
       </li>
 
-      <li>
+      <li *ngIf="role === 'ADMIN' || role === 'PRODUCTION'">
         <a routerLink="/admin/prodution-orders">
           <button
             routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85]"
@@ -87,7 +91,8 @@
           </button>
         </a>
       </li>
-      <li>
+
+      <li *ngIf="role === 'ADMIN' || role === 'PRODUCTION'">
         <a routerLink="/admin/prodution-lines">
           <button
             routerLinkActive="bg-gradient-to-tr from-blue-600 to-blue-400 shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/40 active:opacity-[0.85]"

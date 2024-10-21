@@ -17,6 +17,7 @@ import {
 import { SharedModule } from '../../../shared/shared.module';
 import { Router } from '@angular/router';
 import { environment } from '../../../../environments/environments';
+import { GetUserGeneralResponse } from '../../interfaces/get-user.interface';
 
 @Component({
   selector: 'app-login',
@@ -75,6 +76,22 @@ export class LoginComponent {
         );
         // Eliminar el last_route del localStorage
         localStorage.removeItem(this.lastRouteKey);
+
+        // hacer consulta para obtener el usuario
+        this.authService.getUser(username, loginResponse.jwt).subscribe({
+          next: (response: GetUserGeneralResponse) => {
+            if (!response.isSuccess) {
+              this.sharedService.errorAlert(response.message);
+              return;
+            }
+            const user = response.data;
+            this.authService.setRole(user.roles[0].roleName);
+          },
+          error: (message: any) => {
+            this.sharedService.errorAlert(message);
+          },
+        });
+
         // Redirigir a la página de inicio
         this.router.navigateByUrl('/admin/home');
         this.loading.hide();

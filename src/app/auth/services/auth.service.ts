@@ -1,7 +1,7 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import axios from 'axios';
 import { environment } from '../../../environments/environments';
-import { Observable, from, of, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, from, of, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { LoginGeneralResponse } from '../interfaces/login.interface';
 import { AuthStatus } from '../interfaces/auth-status.enum';
@@ -9,6 +9,7 @@ import { ValidateTokenGeneralResponse } from '../interfaces/validate-token.inter
 import { ForgotPasswordGeneralResponse } from '../interfaces/forgot-password.interface';
 import { ResetPasswordGeneralResponse } from '../interfaces/reset-password.interface';
 import { Router } from '@angular/router';
+import { GetUserGeneralResponse } from '../interfaces/get-user.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +27,23 @@ export class AuthService {
     this.checkAuthStatus().subscribe(); //Cada vez que se inicie el servicio tiene que verificar el estado
   }
 
+  private roleSubject = new BehaviorSubject<string>(
+    this.getRolFromLocalStorage()
+  );
+
+  get role$() {
+    return this.roleSubject.asObservable();
+  }
+
+  setRole(role: string): void {
+    localStorage.setItem('rol', role);
+    this.roleSubject.next(role); // Emitir el nuevo rol
+  }
+
+  getRolFromLocalStorage(): string {
+    return localStorage.getItem('rol') || '';
+  }
+
   login(username: string, password: string): Observable<LoginGeneralResponse> {
     const url = `${this.baseUrl}/auth/login`;
 
@@ -35,6 +53,29 @@ export class AuthService {
     };
 
     return from(axios.post<LoginGeneralResponse>(url, body)).pipe(
+      map((response) => response.data),
+      catchError((error) => {
+        return throwError(
+          () => error.response?.data.message || 'Error desconocido'
+        );
+      })
+    );
+  }
+
+  getUser(username: string, token: string): Observable<GetUserGeneralResponse> {
+    const url = `${this.baseUrl}/admin/users/get-by-username`;
+
+    // mandar el usuario por form data
+    const body = new FormData();
+    body.append('username', username);
+
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    return from(
+      axios.post<GetUserGeneralResponse>(url, body, { headers })
+    ).pipe(
       map((response) => response.data),
       catchError((error) => {
         return throwError(

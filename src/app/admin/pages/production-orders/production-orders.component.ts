@@ -85,6 +85,7 @@ export class ProductionOrdersComponent {
   productionOrderForm: FormGroup = this.fb.group({});
   public isModalOpen: boolean = false;
   public isConfirmModalOpen: boolean = false;
+  public isReportModalOpen: boolean = false;
 
   ngOnInit(): void {
     this.initializeForm();
@@ -381,6 +382,53 @@ export class ProductionOrdersComponent {
           this.getProductionOrders();
           productionLineTypeId = '';
           this.closeConfirmModal();
+        },
+        error: (message: any) => {
+          this.loading.hide();
+          this.sharedService.errorAlert(message);
+        },
+      });
+  }
+
+  openReportModal(): void {
+    this.isReportModalOpen = true;
+  }
+
+  closeReportModal(): void {
+    this.isReportModalOpen = false;
+  }
+
+  generateReport(): void {
+    const statusElement = document.getElementById(
+      'statusOrderReport'
+    ) as HTMLSelectElement;
+    const status = statusElement.value ? parseInt(statusElement.value) : 0;
+
+    if (status == undefined || status == -1) {
+      this.sharedService.errorAlert('Seleccione un tipo de reporte');
+      return;
+    }
+
+    const deliveryDateElement = document.getElementById(
+      'reportDeliveryDate'
+    ) as HTMLInputElement;
+    const deliveryDate = deliveryDateElement.value;
+
+    if (deliveryDate == undefined || deliveryDate == '') {
+      this.sharedService.errorAlert('Seleccione una fecha de entrega');
+      return;
+    }
+
+    console.log('deliveryDate', deliveryDate);
+
+    this.loading.show();
+    this.productionOrderService
+      .generatePdfReport(status, deliveryDate)
+      .subscribe({
+        next: (response: any) => {
+          this.loading.hide();
+          this.closeReportModal();
+          this.sharedService.successAlert('Reporte generado correctamente');
         },
         error: (message: any) => {
           this.loading.hide();

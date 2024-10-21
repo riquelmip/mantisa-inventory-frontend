@@ -8,7 +8,7 @@ import { publicGuard } from './auth/guards/public.guard';
 export const routes: Routes = [
   {
     path: '',
-    component: HomeComponent,
+    component: LayoutComponent,
   },
   {
     path: 'admin',
